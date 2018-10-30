@@ -1,6 +1,9 @@
+const radars = require('./db').radars;
 const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+
+
 
 app.get('/', (req, res) => {
     res.send('hello guys')
@@ -9,11 +12,18 @@ app.get('/', (req, res) => {
 io.on('connection', socket => {
     console.log('a user connected to socket');
 
-    socket.emit('hello', [
-        {long: 234, lat: 321},
-        {long: 123, lat:777}
 
-    ]);
+
+    socket.on('disconnect', function(){
+        console.log('user disconnected');
+    });
+
+    // socket.on('add-message', (message) => {
+    //     io.emit('message', {type:'new-message', text: message});
+    // });
+
+
+    socket.emit('get_radars',radars);
 
 });
 
