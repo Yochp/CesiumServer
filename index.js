@@ -1,4 +1,5 @@
 const radars = require('./db').radars;
+const radarsPosition = require('./db').radarsPosition;
 const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
@@ -24,6 +25,8 @@ io.on('connection', socket => {
 
 
     socket.emit('get_radars',radars);
+    socket.emit('get_radarsPosition',radarsPosition);
+
 
 });
 
