@@ -5,30 +5,6 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
 
-app.get('/', (req, res) => {
-    res.send('hello guys')
-});
-
-io.on('connection', socket => {
-    console.log('a user connected to socket');
-
-
-    socket.on('disconnect', function () {
-        console.log('user disconnected');
-    });
-
-    // socket.on('add-message', (message) => {
-    //     io.emit('message', {type:'new-message', text: message});
-    // });
-
-
-    socket.emit('get_radars', radars);
-    socket.emit('get_radarsPosition', radarsPosition);
-
-
-});
-
-
 let getRandomLocation = function (latitude, longitude, radiusInMeters, RadarId) {
     let id = RadarId;
 
@@ -68,14 +44,54 @@ let getRandomLocation = function (latitude, longitude, radiusInMeters, RadarId) 
     }
 };
 
-
+let randomPoint = [];
 
 setInterval(() => {
+    randomPoint = [];
     radarsPosition.forEach(r => {
-        let rXY = getRandomLocation(r.lat, r.lon, 1000, r.id);
-        console.log(rXY);
+        let p
+        p = getRandomLocation(r.lat, r.lon, 1000, r.id);
+        randomPoint.push(p);
+
+
     });
+    console.log(randomPoint);
+
 }, 3000);
+
+
+// radarsPosition.forEach(r => {
+//     randomPoint = null;
+//     setInterval(() => {
+//     randomPoint = getRandomLocation(r.lat, r.lon, 1000, r.id);
+//     console.log(randomPoint);
+// }, 1000);
+// });
+
+app.get('/', (req, res) => {
+    res.send('hello guys')
+});
+
+io.on('connection', socket => {
+    console.log('a user connected to socket');
+
+
+    socket.on('disconnect', function () {
+        console.log('user disconnected');
+    });
+
+    // socket.on('add-message', (message) => {
+    //     io.emit('message', {type:'new-message', text: message});
+    // });
+
+
+    socket.emit('get_radars', radars);
+    socket.emit('get_radarsPosition', radarsPosition);
+    socket.emit('get_randomPoint', randomPoint);
+
+
+});
+
 
 http.listen(3000, () => {
     console.log('listening on *:3000');
